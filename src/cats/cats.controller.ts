@@ -6,19 +6,21 @@ import {
   Param,
   Post,
   Put,
-  Query,
-  Req,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { CreateCatDto } from '../dto/create-cat.dto';
-import { ListAllEntities } from '../dto/list-all-entities.dto';
-import { UpdateCatDto } from '../dto/update-cat.dto';
+import { CreateCatDto } from './dto/create-cat.dto';
+import { ListAllEntities } from './dto/list-all-entities.dto';
+import { UpdateCatDto } from './dto/update-cat.dto';
+import { CatsService } from './cats.service';
+import { Cat } from './interfaces/cat.interface';
 
 @Controller('cats')
 export class CatsController {
+  constructor(private catsService: CatsService) {}
+
   @Post()
   async create(@Body() createCatDto: CreateCatDto) {
-    return 'This action adds a new cat';
+    this.catsService.create(createCatDto);
   }
 
   // @Get()
@@ -27,8 +29,8 @@ export class CatsController {
   // }
 
   @Get()
-  findAll(@Query() query: ListAllEntities) {
-    return `This action returns all cats (litmit: ${query.limit} items)`;
+  async findAll(): Promise<Cat[]> {
+    return this.catsService.findAll();
   }
 
   @Get(':id')
